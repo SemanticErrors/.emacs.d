@@ -24,6 +24,13 @@
       inhibit-startup-screen t
       initial-scratch-message nil)
 
+;; VIM EVIL MODE
+(use-package evil
+  :init
+  (evil-mode)
+  :config
+  (evil-set-initial-state 'eat-mode 'insert)) ;; Set initial state in eat terminal to insert mode
+
 ;; Core Emacs settings
 (use-package emacs
   :init
@@ -43,6 +50,37 @@
   (auto-save-default nil)                          ;; Disable auto-save
   (display-line-numbers-type 'relative)            ;; enable relative line numbers
   (display-fill-column-indicator-column 80))       ;; Vertical line at 80 column
+
+;; Tree-Sitter Configurations
+(setq treesit-language-source-alist
+   '((c     "https://github.com/tree-sitter/tree-sitter-c")
+     (cpp   "https://github.com/tree-sitter/tree-sitter-cpp")
+     (java  "https://github.com/tree-sitter/tree-sitter-java")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")))
+
+(dolist (lang (mapcar #'car treesit-language-source-alist))
+  (unless (treesit-language-available-p lang)
+    (treesit-install-language-grammar lang)))
+
+(use-package treesit
+  :ensure nil
+  :custom
+  (major-mode-remap-alist
+   '((c-mode             . c-ts-mode)
+     (c++-mode           . c++-ts-mode)
+     (java-mode          . java-ts-mode)
+     (python-mode        . python-ts-mode)
+     (bash-mode          . bash-ts-mode)
+     (html-mode          . html-ts-mode)
+     (css-mode           . css-ts-mode)
+     (js-mode            . js-ts-mode)))
+  ;; Fixing Indentations
+  (c-ts-mode-indent-offset 4)
+  (python-indent-guess-indent-offset nil))
 
 ;; GCMH Optimizations
 (use-package gcmh
