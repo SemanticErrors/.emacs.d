@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
 ;; Automatically install packages
 (setq use-package-always-ensure t
       use-package-enable-imenu-support t)
@@ -31,12 +33,13 @@
   :config
   (evil-set-initial-state 'eat-mode 'insert)) ;; Set initial state in eat terminal to insert mode
 
+(require 'xclip)
+
 ;; Core Emacs settings
 (use-package emacs
   :init
   (global-display-line-numbers-mode t)             ;; Enable line numbers
   (global-display-fill-column-indicator-mode t)    ;; Enable vertical line
-  (load-theme 'modus-vivendi)                      ;; protesilaos's modus vivendi theme
 
   :custom
   (menu-bar-mode nil)                              ;; Disable menu bar
@@ -81,6 +84,15 @@
   ;; Fixing Indentations
   (c-ts-mode-indent-offset 4)
   (python-indent-guess-indent-offset nil))
+
+;; Gruvbox Theme
+(use-package gruvbox-theme
+  :defer 2
+  :init
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (require 'gruvbox-theme nil 'noerror)
+                (load-theme 'gruvbox-dark-medium t)))))
 
 ;; GCMH Optimizations
 (use-package gcmh
